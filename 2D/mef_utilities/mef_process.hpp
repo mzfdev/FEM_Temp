@@ -75,6 +75,7 @@ void assembly_K(Matrix* K, Matrix* local_K, short index1, short index2, int inde
     K->add(local_K->get(2,0),index3,index1);    K->add(local_K->get(2,1),index3,index2);    K->add(local_K->get(2,2),index3,index3);
 }
 
+
 void assembly_b(Vector* b, Vector* local_b, short index1, short index2, int index3){
     b->add(local_b->get(0),index1);
     b->add(local_b->get(1),index2);

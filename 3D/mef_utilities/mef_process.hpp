@@ -3,11 +3,21 @@ float calculate_local_area(float x1, float y1, float z1, float x2, float y2, flo
 }
 
 float calculate_local_jacobian(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4){
-    return (x2 - x1)*(y3 - y1)*(z4 - z1) - (x2 - x1)*(y4 - y1)*(z3 - z1) - (x3 - x1)*(y2 - y1)*(z4 - z1) + (x3 - x1)*(y4 - y1)*(z2 - z1) + (x4 - x1)*(y2 - y1)*(z3 - z1) - (x4 - x1)*(y3 - y1)*(z2 - z1);
+    return (x2 - x1)*(y3 - y1)*(z4 - z1) -
+           (x2 - x1)*(y4 - y1)*(z3 - z1) - 
+           (x3 - x1)*(y2 - y1)*(z4 - z1) + 
+           (x3 - x1)*(y4 - y1)*(z2 - z1) + 
+           (x4 - x1)*(y2 - y1)*(z3 - z1) - 
+           (x4 - x1)*(y3 - y1)*(z2 - z1);
 }
 
 float calculate_local_volume(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4){
-    return abs((x2 - x1)*(y3 - y1)*(z4 - z1) - (x2 - x1)*(y4 - y1)*(z3 - z1) - (x3 - x1)*(y2 - y1)*(z4 - z1) + (x3 - x1)*(y4 - y1)*(z2 - z1) + (x4 - x1)*(y2 - y1)*(z3 - z1) - (x4 - x1)*(y3 - y1)*(z2 - z1))/6;
+    return abs((x2 - x1)*(y3 - y1)*(z4 - z1) - 
+               (x2 - x1)*(y4 - y1)*(z3 - z1) - 
+               (x3 - x1)*(y2 - y1)*(z4 - z1) + 
+               (x3 - x1)*(y4 - y1)*(z2 - z1) + 
+               (x4 - x1)*(y2 - y1)*(z3 - z1) - 
+               (x4 - x1)*(y3 - y1)*(z2 - z1))/6;
 }
 
 void calculate_B(Matrix* B){
@@ -48,7 +58,7 @@ void create_local_K(Matrix* K, short element_id, Mesh* M){
     product_matrix_by_matrix(&A,&B,&res1);
     product_matrix_by_matrix(&At,&res1,&res2);
     product_matrix_by_matrix(&Bt,&res2,&res3);
-    product_scalar_by_matrix(k*Volumen/(J*J),&res3,3,3,K);
+    product_scalar_by_matrix(k*Volumen/(J*J),&res3,4,4,K);
 
     //cout << "\t\tLocal matrix created for Element " << element_id+1 << ": "; K->show(); cout << "\n";
 }
@@ -80,10 +90,10 @@ void create_local_systems(Matrix* Ks, Vector* bs, short num_elements, Mesh* M){
 }
 
 void assembly_K(Matrix* K, Matrix* local_K, short index1, short index2, int index3, int index4){
-    K->add(local_K->get(3,3),index1,index1);    K->add(local_K->get(3,2),index1,index2);    K->add(local_K->get(3,1),index1,index3);   K->add(local_K->get(3,0),index1,index4);
-    K->add(local_K->get(2,3),index2,index1);    K->add(local_K->get(2,2),index2,index2);    K->add(local_K->get(2,1),index2,index3);   K->add(local_K->get(2,0),index2,index4);
-    K->add(local_K->get(1,3),index3,index1);    K->add(local_K->get(1,2),index3,index2);    K->add(local_K->get(1,1),index3,index3);   K->add(local_K->get(1,0),index3,index4);
-    K->add(local_K->get(0,3),index4,index1);    K->add(local_K->get(0,2),index4,index2);    K->add(local_K->get(0,1),index4,index3);   K->add(local_K->get(0,0),index4,index4);
+    K->add(local_K->get(0,0),index1,index1);   K->add(local_K->get(0,1),index1,index2);   K->add(local_K->get(0,2),index1,index3);  K->add(local_K->get(0,3),index1,index4);
+    K->add(local_K->get(1,0),index2,index1);    K->add(local_K->get(1,1),index2,index2);    K->add(local_K->get(1,2),index2,index3);   K->add(local_K->get(1,3),index2,index4);
+    K->add(local_K->get(2,0),index3,index1);    K->add(local_K->get(2,1),index3,index2);    K->add(local_K->get(2,2),index3,index3);   K->add(local_K->get(2,3),index3,index4);
+    K->add(local_K->get(3,0),index4,index1);    K->add(local_K->get(3,1),index4,index2);    K->add(local_K->get(3,2),index4,index3);   K->add(local_K->get(3,3),index4,index4);
 }
 
 void assembly_b(Vector* b, Vector* local_b, short index1, short index2, int index3, int index4){
